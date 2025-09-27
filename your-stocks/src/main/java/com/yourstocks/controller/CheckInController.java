@@ -10,7 +10,7 @@ import com.yourstocks.model.Stock;
 
 @RestController
 @RequestMapping("/api/stocks")
-public class StockController {
+public class CheckInController {
 
     private final CheckInService checkInService;
 
