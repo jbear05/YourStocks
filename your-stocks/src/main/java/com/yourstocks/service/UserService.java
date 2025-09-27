@@ -1,5 +1,7 @@
 package com.yourstocks.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,5 +36,10 @@ public class UserService {
         stockRepository.save(new Stock(newUser.getId(), "career"));
 
         return newUser;
+    }
+    
+    //fetch user by id
+    public Optional<User> getUserById(Long id){
+    	return userRepository.findById(id);
     }
 }

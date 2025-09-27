@@ -1,5 +1,7 @@
 package com.yourstocks.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +11,8 @@ import com.yourstocks.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     
     //find a user by their username
-    User findByUsername(String username); 
+    Optional<User> findByUsername(String username); 
+    
+    //find a user by their username
+    Optional<User> findById(Long id); 
 }
