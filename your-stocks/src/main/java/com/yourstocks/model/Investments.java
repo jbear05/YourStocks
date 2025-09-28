@@ -1,60 +1,65 @@
 package com.yourstocks.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "investments")
 public class Investments {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	// This checks the amount of CareCoins invested
-	@Column(nullable = false)
-	private Double amount;
-	
-	// This shows timestamp of investments
-	@Column(nullable = false)
-	private LocalDateTime createdAt = LocalDateTime.now();
-	
-	// This just shows and maps the relationship to the user
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // The user placing the bet (Investor)
+    @Column(name = "investor_id", nullable = false)
+    private Long investorId;
+
+    // The user/stock being bet on (Target)
+    @Column(name = "target_user_id", nullable = false)
+    private Long targetUserId;
+
+    @Column(nullable = false)
+    private String targetStockName; // e.g., "fitness" or "career"
+
+    @Column(nullable = false)
+    private Integer stakeAmount;
+
+    @Column(nullable = false)
+    private Instant timestamp = Instant.now();
 
 	public Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public Long getInvestorId() {
+		return investorId;
 	}
 
-	public Double getAmount() {
-		return amount;
+	public void setInvestorId(Long userId) {
+		this.investorId = userId;
 	}
 
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public Long getTargetUserId() {
+		return targetUserId;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	public void setTargetUserId(Long targetUserId) {
+		this.targetUserId = targetUserId;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
+	public String getTargetStockName() {
+		return targetStockName;
 	}
 
-	public User getUser() {
-		return user;
+	public void setTargetStockName(String targetStockName) {
+		this.targetStockName = targetStockName;
 	}
-
-	public void setUser(User user) {
-		this.user = user;
+	
+	public void setStakeAmount(Integer stakeAmount) {
+		this.stakeAmount = stakeAmount;
 	}
+	
 	
 	
 	

@@ -1,5 +1,7 @@
 package com.yourstocks.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 
@@ -18,14 +20,27 @@ public class Stock {
 	
 	
 	@Column(nullable = false)
-	private Double value;
+	private Double currentValue;
 	
 	
 	// Many stocks for one user - many to one relationship
 	// Joining columns together with foreign key user_id
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+	@JsonIgnoreProperties("stocks")
     private User user;
+	
+	public Stock() {
+		this.user = null;
+		this.name = "";
+		this.currentValue = 100.0;
+	}
+	
+	public Stock(User user, String name) {
+		this.user = user;
+		this.name = name;
+		this.currentValue = 100.0;
+	}
 
 	
 	// Getters and setters
@@ -46,11 +61,11 @@ public class Stock {
 	}
 
 	public Double getValue() {
-		return value;
+		return currentValue;
 	}
 
 	public void setValue(Double value) {
-		this.value = value;
+		this.currentValue = value;
 	}
 
 	public User getUser() {

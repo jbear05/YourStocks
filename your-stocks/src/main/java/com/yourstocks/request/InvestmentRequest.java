@@ -2,29 +2,33 @@ package com.yourstocks.request;
 
 // Data Transfer Object to separate what the cleint sends from entity
 public class InvestmentRequest {
-	private Long userId;
-	private Long stockId;
-	private Double amount;
+	private Long investorId;
+	private Long targetUserId;
+	private String targetStockName;
+	private Integer amount;
 	
-	
-	public Long getUserId() {
-		return userId;
+	public Long getInvestorId() {
+		return investorId;
 	}
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setInvestorId(Long investorId) {
+		this.investorId = investorId;
 	}
-	public Long getStockId() {
-		return stockId;
+	public Long getTargetUserId() {
+		return targetUserId;
 	}
-	public void setStockId(Long stockId) {
-		this.stockId = stockId;
+	public void setTargetUserId(Long targetUserId) {
+		this.targetUserId = targetUserId;
 	}
-	public Double getAmount() {
+	public String getTargetStockName() {
+		return targetStockName;
+	}
+	public void setTargetStockName(String targetStockName) {
+		this.targetStockName = targetStockName;
+	}
+	public Integer getAmount() {
 		return amount;
 	}
-	public void setAmount(Double amount) {
+	public void setAmount(Integer amount) {
 		this.amount = amount;
 	}
-	
-	
 }

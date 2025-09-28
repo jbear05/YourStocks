@@ -1,15 +1,25 @@
 package com.yourstocks.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+
 /*
 This entity will hold the information for each user in a table.
 */
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity // Marks this class as a JPA entity (a table in the database)
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -22,6 +32,13 @@ public class User {
 
     // virtual currency balance
     private Integer careCoins; 
+    
+    // Defines the relationship from User to multiple Stocks
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Stock> stocks = new ArrayList<>(); 
+    
+    @Column(name = "auth0_sub", unique = true) // Store the unique Auth0 identifier (Subject)
+    private String auth0Sub;
 
     // --- Constructors ---
     // JPA requires a default no-argument constructor
@@ -54,4 +71,8 @@ public class User {
 	public void setCareCoins(Integer careCoins) {
 		this.careCoins = careCoins;
 	}
+	
+	public List<Stock> getStocks() {
+        return stocks;
+    }
 }

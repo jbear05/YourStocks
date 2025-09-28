@@ -29,7 +29,7 @@ public class CheckInService {
         checkInRepository.save(checkIn);
 
         // 2. Retrieve the Target Stock
-        Stock stock = stockRepository.findByUserIdAndName(userId, stockName);
+        Stock stock = stockRepository.findByUser_IdAndName(userId, stockName);
         if (stock == null) {
             // Handle error: stock not found (e.g., throw a custom exception)
             throw new RuntimeException("Stock not found for user: " + userId + " and stock: " + stockName);
@@ -40,13 +40,13 @@ public class CheckInService {
         // This is simple: >5 is a gain, <5 is a loss, 5 is neutral.
         double delta = (double)moodScore - 5.0; // e.g., if mood=8, delta=3.0
 
-        double newStockValue = stock.getCurrentValue() + delta;
+        double newStockValue = stock.getValue() + delta;
         
         // OPTIONAL: Prevent stock value from going below 0
         newStockValue = Math.max(0.0, newStockValue); 
 
         // 4. Update the Stock Value and Save
-        stock.setCurrentValue(newStockValue);
+        stock.setValue(newStockValue);
         return stockRepository.save(stock); // Save and return the updated stock
     }
 }

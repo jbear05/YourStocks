@@ -1,8 +1,6 @@
 package com.yourstocks.controller;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,17 +24,14 @@ public class InvestmentController {
 		this.investmentService = investmentService;
 	}
 	
-	// Get requests run this method
-	// Returns as JSON
-	@GetMapping
-	public List<Investments> getInvestments() {
-		return investmentService.getAllInvestments();
-	}
-	
-	// POST requests run this method
-	// turns JSON body from request -> Investments object
-	@PostMapping
-	public Investments addInvestment(@RequestBody InvestmentRequest investment) {
-		return investmentService.createInvestment(investment);
-	}
+    @PostMapping("/stake")
+    public ResponseEntity<Investments> stake(@RequestBody InvestmentRequest request) {
+        try {
+            Investments newStake = investmentService.createInvestment(request);
+            return ResponseEntity.ok(newStake);
+        } catch (RuntimeException e) {
+            // Handle custom business logic errors (e.g., Insufficient funds)
+            return ResponseEntity.badRequest().body(null); // Simple error response for MVP
+        }
+    }
 }

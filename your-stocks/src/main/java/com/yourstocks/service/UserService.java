@@ -1,5 +1,6 @@
 package com.yourstocks.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -24,22 +25,72 @@ public class UserService {
 
     @Transactional // Ensures the user and stocks are saved together
     public User registerNewUser(String username) {
-        // 1. Create and save the new User
+        
         User newUser = new User(username); 
-        newUser = userRepository.save(newUser);
+        // 1. Save the new user to get the ID
+        newUser = userRepository.save(newUser); 
+        
+        // 2. Create and save the stocks
+        stockRepository.save(new Stock(newUser, "fitness")); 
+        stockRepository.save(new Stock(newUser, "social"));
+        stockRepository.save(new Stock(newUser, "career"));
 
-        // 2. Create the 3 starter stocks (as required by the PRD)
-        // if you see this Sam feel free to change the constructor to fit whatever
-        // you made it to be
-        stockRepository.save(new Stock(newUser.getId(), "fitness"));
-        stockRepository.save(new Stock(newUser.getId(), "social"));
-        stockRepository.save(new Stock(newUser.getId(), "career"));
-
-        return newUser;
+        // 3. CRITICAL STEP: Reload the User and eagerly fetch the stocks
+        // We use the new query method to ensure the stocks list is populated 
+        // before the method completes and the session closes.
+        return userRepository.findByIdWithStocks(newUser.getId())
+            .orElseThrow(() -> new RuntimeException("Error fetching newly created user data."));
     }
     
-    //fetch user by id
-    public Optional<User> getUserById(Long id){
-    	return userRepository.findById(id);
+    @Transactional(readOnly = true) // Use a transactional context for reading
+    public Optional<User> getUserById(Long userId) {
+        
+        // Use the custom repository method to fetch the User and the Stocks
+        Optional<User> userOptional = userRepository.findByIdWithStocks(userId);
+        
+        // CRITICAL: Ensure the custom query logic is applied here
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            
+            // Ensure the lazy loaded list is initialized if you're not using findByIdWithStocks
+            // Hibernate.initialize(user.getStocks()); 
+
+            return Optional.of(user);
+        }
+        
+        // If user is not found, return empty Optional
+        return Optional.empty(); 
+    }
+
+    public List<User> searchUsersByUsername(String query) {
+        
+    	// TEMPORARY DEBUG: Check what value the service is actually receiving
+        System.out.println("DEBUG: Incoming Search Query is: [" + query + "]"); 
+    	
+        // Final sanity check: if query is null/empty, return empty list
+        if (query == null || query.trim().isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        
+        // Call the guaranteed custom method
+        return userRepository.searchByUsername(query);
+    }
+
+    public Long getUserIdFromAuth0Id(String auth0Sub) {
+        
+        // DEBUG STATEMENT 2: Print the value being searched
+        System.out.println("DEBUG (Service): Attempting lookup for Auth0 Sub: " + auth0Sub); 
+
+        User user = userRepository.findByAuth0Sub(auth0Sub)
+            .orElseThrow(() -> {
+                // DEBUG STATEMENT 3: CONFIRMS FAILURE POINT
+                System.out.println("DEBUG (Service): Lookup FAILED. Subject is NOT in DB."); 
+                return new RuntimeException("User not linked to Auth0 ID: " + auth0Sub);
+            });
+            
+        // DEBUG STATEMENT 4: This line WILL NOT BE REACHED if the code crashes
+        System.out.println("DEBUG (Service): Successfully MAPPED Auth0 Sub to User ID: " + user.getId()); 
+
+        return user.getId();
     }
 }

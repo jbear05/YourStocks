@@ -23,7 +23,7 @@ public class StockService {
 
     // Get a stock by id
     public Optional<Stock> getStockById(Long id) {
-        return stockRepository.findByStockID(id);
+        return stockRepository.findById(id);
     }
 
     // Get all stocks
@@ -33,7 +33,7 @@ public class StockService {
 
     // Get all stocks for a specific user
     public List<Stock> getStocksByUserId(Long userId) {
-        return stockRepository.findByUserID(userId);
+        return stockRepository.findByUserId(userId);
     }
 
     // Delete a stock
